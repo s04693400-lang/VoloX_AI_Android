@@ -1,0 +1,302 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101014">
+  <title>VoloX AI Tools</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #101014;
+      color: white;
+    }
+
+    header {
+      padding: 20px;
+      background: #202027;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid #38383f;
+    }
+
+    header a {
+      color: #ff4242;
+      text-decoration: none;
+      font-size: 24px;
+    }
+
+    header h2 {
+      margin: 0;
+    }
+
+    main {
+      max-width: 650px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .tabs button {
+      flex: 1;
+      padding: 13px 5px;
+      border: 1px solid #444;
+      border-radius: 12px;
+      background: #222229;
+      color: white;
+      cursor: pointer;
+    }
+
+    .tabs button.active {
+      background: #ff4242;
+      border-color: #ff4242;
+    }
+
+    .panel {
+      display: none;
+      background: #202027;
+      padding: 20px;
+      border: 1px solid #38383f;
+      border-radius: 16px;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    h3 {
+      margin-top: 0;
+    }
+
+    p {
+      color: #aaa;
+      line-height: 1.5;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 1px solid #444;
+      background: #303039;
+      color: white;
+      font-size: 15px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .action {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #ff4242;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .preview {
+      display: none;
+      width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      margin-top: 15px;
+      border-radius: 12px;
+      background: #111;
+    }
+
+    .result {
+      margin-top: 15px;
+      color: #ddd;
+      overflow-wrap: anywhere;
+    }
+
+    .result a {
+      color: #ff7777;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <a href="index.html">←</a>
+    <h2>VoloX AI Tools</h2>
+  </header>
+
+  <main>
+
+    <div class="tabs">
+      <button class="active" onclick="showTab('images', this)">
+        Images
+      </button>
+
+      <button onclick="showTab('create', this)">
+        Create
+      </button>
+
+      <button onclick="showTab('lens', this)">
+        Lens
+      </button>
+    </div>
+
+    <section class="panel active" id="images">
+      <h3>🖼️ Image Search</h3>
+      <p>Search for images on the web.</p>
+
+      <input
+        id="imageQuery"
+        placeholder="Search images..."
+      >
+
+      <button class="action" onclick="searchImages()">
+        Search Images
+      </button>
+    </section>
+
+    <section class="panel" id="create">
+      <h3>✨ AI Image Creation</h3>
+      <p>Describe the image you want to create.</p>
+
+      <textarea
+        id="imagePrompt"
+        placeholder="Describe your image..."
+      ></textarea>
+
+      <button class="action" onclick="createImage()">
+        Create Image
+      </button>
+
+      <div class="result" id="createResult">
+        Image generation requires a connected image-generation backend.
+      </div>
+    </section>
+
+    <section class="panel" id="lens">
+      <h3>📷 VoloX Lens</h3>
+      <p>Select an image to preview it for visual search.</p>
+
+      <input
+        type="file"
+        id="lensFile"
+        accept="image/*"
+      >
+
+      <img
+        id="preview"
+        class="preview"
+        alt="Selected image preview"
+      >
+
+      <button class="action" onclick="visualSearch()">
+        Visual Search
+      </button>
+
+      <div class="result" id="lensResult"></div>
+    </section>
+
+  </main>
+
+  <script>
+    function showTab(tabId, button) {
+      document.querySelectorAll(".panel").forEach(panel => {
+        panel.classList.remove("active");
+      });
+
+      document.querySelectorAll(".tabs button").forEach(btn => {
+        btn.classList.remove("active");
+      });
+
+      document.getElementById(tabId).classList.add("active");
+      button.classList.add("active");
+    }
+
+    function searchImages() {
+      const query = document.getElementById("imageQuery").value.trim();
+
+      if (!query) {
+        alert("Please enter an image search.");
+        return;
+      }
+
+      window.open(
+        "https://www.google.com/search?tbm=isch&q=" +
+        encodeURIComponent(query),
+        "_blank"
+      );
+    }
+
+    async function createImage() {
+      const prompt = document.getElementById("imagePrompt").value.trim();
+      const result = document.getElementById("createResult");
+
+      if (!prompt) {
+        alert("Please describe your image.");
+        return;
+      }
+
+      result.textContent =
+        "Image generation backend is not connected yet. No image has been generated.";
+    }
+
+    const lensFile = document.getElementById("lensFile");
+    const preview = document.getElementById("preview");
+
+    lensFile.addEventListener("change", function() {
+      const file = this.files[0];
+
+      if (!file) return;
+
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image.");
+        this.value = "";
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Please select an image smaller than 5 MB.");
+        this.value = "";
+        return;
+      }
+
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = "block";
+
+      document.getElementById("lensResult").textContent =
+        "Image preview ready. Visual search backend is not connected yet.";
+    });
+
+    function visualSearch() {
+      const file = lensFile.files[0];
+
+      if (!file) {
+        alert("Please select an image first.");
+        return;
+      }
+
+      document.getElementById("lensResult").textContent =
+        "Your image is selected. A secure visual-search service must be connected before results can be returned.";
+    }
+  </script>
+
+</body>
+</html>
