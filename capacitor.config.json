@@ -1,0 +1,7 @@
+
+{
+  "appId": "com.volox.ai",
+  "appName": "VoloX AI",
+  "webDir": ".",
+  "bundledWebRuntime": false
+}
