@@ -1,5 +1,4 @@
-
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -18,12 +17,15 @@
       background: #101014;
       color: white;
       height: 100vh;
+      height: 100dvh;
       display: flex;
       flex-direction: column;
     }
 
     header {
-      padding: 18px;
+      height: 68px;
+      flex-shrink: 0;
+      padding: 0 18px;
       background: #202027;
       display: flex;
       align-items: center;
@@ -34,7 +36,7 @@
     header a {
       color: #ff4242;
       text-decoration: none;
-      font-size: 22px;
+      font-size: 25px;
     }
 
     header h2 {
@@ -42,10 +44,16 @@
       font-size: 21px;
     }
 
+    .logo {
+      color: #ff4242;
+      font-weight: bold;
+    }
+
     #messages {
       flex: 1;
       overflow-y: auto;
       padding: 18px;
+      scroll-behavior: smooth;
     }
 
     .message {
@@ -53,31 +61,40 @@
       margin: 12px 0;
       border-radius: 15px;
       max-width: 85%;
-      line-height: 1.5;
+      line-height: 1.6;
       overflow-wrap: anywhere;
+      white-space: pre-wrap;
     }
 
     .user {
       background: #c93636;
       margin-left: auto;
+      border-bottom-right-radius: 4px;
     }
 
     .assistant {
       background: #292930;
       margin-right: auto;
+      border-bottom-left-radius: 4px;
     }
 
     .welcome {
       text-align: center;
       color: #aaa;
-      margin-top: 80px;
+      margin: 70px auto 0;
+      max-width: 400px;
     }
 
     .welcome h1 {
       color: #ff4242;
+      font-size: 36px;
     }
 
-    form {
+    .welcome p {
+      line-height: 1.6;
+    }
+
+    .chat-form {
       display: flex;
       gap: 8px;
       padding: 14px;
@@ -85,7 +102,7 @@
       border-top: 1px solid #38383f;
     }
 
-    input {
+    .chat-form input {
       flex: 1;
       min-width: 0;
       padding: 14px;
@@ -94,15 +111,44 @@
       background: #303039;
       color: white;
       outline: none;
+      font-size: 16px;
     }
 
-    button {
+    .chat-form input:focus {
+      border-color: #ff4242;
+    }
+
+    .chat-form button {
       border: none;
       border-radius: 12px;
       padding: 0 19px;
       background: #ff4242;
       color: white;
       font-weight: bold;
+      cursor: pointer;
+    }
+
+    .chat-form button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .status {
+      text-align: center;
+      color: #888;
+      font-size: 12px;
+      padding: 5px 10px;
+      background: #202027;
+    }
+
+    @media (max-width: 400px) {
+      .message {
+        max-width: 92%;
+      }
+
+      header h2 {
+        font-size: 18px;
+      }
     }
   </style>
 </head>
@@ -110,56 +156,126 @@
 <body>
 
   <header>
-    <a href="index.html">←</a>
-    <h2>VoloX AI Chat</h2>
+    <a href="index.html" aria-label="Go home">←</a>
+    <h2><span class="logo">VoloX</span> AI Chat</h2>
   </header>
 
-  <div id="messages">
+  <div id="messages" aria-live="polite">
     <div class="welcome" id="welcome">
       <h1>VoloX AI</h1>
       <p>Your AI assistant experience starts here.</p>
-      <p>Send a message to test the chat interface.</p>
+      <p>Ask a question to begin your conversation.</p>
     </div>
   </div>
 
-  <form id="chatForm">
+  <div class="status" id="status">
+    AI connection requires a deployed backend.
+  </div>
+
+  <form class="chat-form" id="chatForm">
     <input
       id="messageInput"
       type="text"
       placeholder="Message VoloX AI..."
       autocomplete="off"
+      maxlength="4000"
       required
     >
-    <button type="submit">Send</button>
+
+    <button id="sendButton" type="submit">
+      Send
+    </button>
   </form>
 
   <script>
+    // Replace this with your deployed backend URL.
+    // Example: https://your-server.example.com/api/chat
+    const API_URL = "YOUR_BACKEND_URL/api/chat";
+
     const form = document.getElementById("chatForm");
     const input = document.getElementById("messageInput");
     const messages = document.getElementById("messages");
+    const sendButton = document.getElementById("sendButton");
+    const status = document.getElementById("status");
 
-    form.addEventListener("submit", function(event) {
+    function addMessage(text, type) {
+      const message = document.createElement("div");
+
+      message.className = "message " + type;
+      message.textContent = text;
+
+      messages.appendChild(message);
+      messages.scrollTop = messages.scrollHeight;
+
+      return message;
+    }
+
+    form.addEventListener("submit", async function(event) {
       event.preventDefault();
 
       const message = input.value.trim();
+
       if (!message) return;
+
+      if (
+        API_URL.includes("YOUR_BACKEND_URL") ||
+        !API_URL.startsWith("https://")
+      ) {
+        status.textContent = "Backend not configured yet.";
+        return;
+      }
 
       document.getElementById("welcome")?.remove();
 
-      const userMessage = document.createElement("div");
-      userMessage.className = "message user";
-      userMessage.textContent = message;
-      messages.appendChild(userMessage);
-
-      const reply = document.createElement("div");
-      reply.className = "message assistant";
-      reply.textContent =
-        "Your message reached the VoloX chat interface! " +
-        "The real AI connection will be added using a secure backend.";
-      messages.appendChild(reply);
+      addMessage(message, "user");
 
       input.value = "";
-      messages.scrollTop = messages.scrollHeight;
+      input.disabled = true;
+      sendButton.disabled = true;
+
+      const loading = addMessage(
+        "VoloX AI is thinking...",
+        "assistant"
+      );
+
+      status.textContent = "Connecting to VoloX AI...";
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: message
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Server request failed.");
+        }
+
+        loading.textContent =
+          data.reply || "No response received.";
+
+        status.textContent = "Connected to VoloX AI";
+
+      } catch (error) {
+        loading.textContent =
+          "Sorry! I couldn't connect right now. Please try again later.";
+
+        status.textContent = "Connection unavailable.";
+
+        console.error("VoloX error:", error);
+
+      } finally {
+        input.disabled = false;
+        sendButton.disabled = false;
+        input.focus();
+        messages.scrollTop = messages.scrollHeight;
+      }
     });
   </script>
 
