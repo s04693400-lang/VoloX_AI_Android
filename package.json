@@ -1,14 +1,17 @@
-
-{
-  "name": "volox-ai-backend",
+ {
+  "name": "volox-ai-android",
   "version": "1.0.0",
-  "type": "module",
+  "private": true,
+  "description": "VoloX AI Android application",
   "scripts": {
-    "start": "node server.js"
+    "build": "npx cap sync android",
+    "android": "npx cap open android"
   },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "openai": "^5.0.0"
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3"
   }
-}
+ }
