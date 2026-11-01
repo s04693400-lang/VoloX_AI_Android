@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101014">
+
+  <link rel="manifest" href="manifest.json">
+
+  <title>VoloX AI - Search and Discover</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #101014;
+      color: white;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      border-bottom: 1px solid #292930;
+      background: #17171d;
+    }
+
+    .logo {
+      font-size: 27px;
+      font-weight: bold;
+      color: #ff4242;
+      letter-spacing: 0.5px;
+    }
+
+    .profile {
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      border: 1px solid #444;
+      background: #292930;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    main {
+      max-width: 720px;
+      margin: 65px auto 30px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 7vw, 46px);
+      margin-bottom: 13px;
+    }
+
+    .hero h1 span {
+      color: #ff4242;
+    }
+
+    .subtitle {
+      color: #aaa;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 7px;
+      padding: 7px;
+      background: #222229;
+      border: 1px solid #41414a;
+      border-radius: 17px;
+    }
+
+    .search-box input {
+      flex: 1;
+      min-width: 0;
+      padding: 14px;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: white;
+      font-size: 16px;
+    }
+
+    .search-box button {
+      padding: 0 19px;
+      border: none;
+      border-radius: 12px;
+      background: #ff4242;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .quick-title {
+      text-align: left;
+      margin: 34px 0 15px;
+      font-size: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 13px;
+    }
+
+    .tool {
+      min-height: 112px;
+      padding: 17px 8px;
+      border: 1px solid #35353e;
+      border-radius: 16px;
+      background: #202027;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .tool:active {
+      background: #393943;
+      transform: scale(0.97);
+    }
+
+    .emoji {
+      display: block;
+      font-size: 29px;
+      margin-bottom: 10px;
+    }
+
+    .tool-name {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .welcome-card {
+      margin-top: 30px;
+      padding: 22px;
+      text-align: left;
+      background: #202027;
+      border: 1px solid #35353e;
+      border-radius: 16px;
+    }
+
+    .welcome-card h3 {
+      color: #ff5555;
+      margin-bottom: 9px;
+    }
+
+    .welcome-card p {
+      color: #aaa;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    footer {
+      text-align: center;
+      color: #777;
+      padding: 25px 15px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 380px) {
+      main {
+        margin-top: 35px;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .search-box button {
+        padding: 0 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">VoloX AI</div>
+
+    <button
+      class="profile"
+      onclick="openProfile()"
+      aria-label="Open profile"
+    >
+      👤
+    </button>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <h1>Explore with <span>VoloX</span></h1>
+
+      <p class="subtitle">
+        Search the web. Discover more.<br>
+        Your AI assistant experience starts here.
+      </p>
+    </section>
+
+    <form class="search-box" onsubmit="searchWeb(event)">
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Ask or search anything..."
+        autocomplete="off"
+        required
+      >
+
+      <button type="submit">Search</button>
+    </form>
+
+    <h2 class="quick-title">Explore VoloX AI</h2>
+
+    <section class="grid">
+
+      <button class="tool" onclick="openAI()">
+        <span class="emoji">🤖</span>
+        <span class="tool-name">AI Chat</span>
+      </button>
+
+      <button class="tool" onclick="openImages()">
+        <span class="emoji">🖼️</span>
+        <span class="tool-name">Images</span>
+      </button>
+
+      <button class="tool" onclick="openCreate()">
+        <span class="emoji">✨</span>
+        <span class="tool-name">Create</span>
+      </button>
+
+      <button class="tool" onclick="openLens()">
+        <span class="emoji">📷</span>
+        <span class="tool-name">Lens</span>
+      </button>
+
+      <button class="tool" onclick="openNews()">
+        <span class="emoji">📰</span>
+        <span class="tool-name">News</span>
+      </button>
+
+      <button class="tool" onclick="openSports()">
+        <span class="emoji">🏆</span>
+        <span class="tool-name">Sports</span>
+      </button>
+
+      <button class="tool" onclick="openDiscover()">
+        <span class="emoji">🌍</span>
+        <span class="tool-name">Discover</span>
+      </button>
+
+      <button class="tool" onclick="openProfile()">
+        <span class="emoji">👤</span>
+        <span class="tool-name">Profile</span>
+      </button>
+
+      <button class="tool" onclick="openAbout()">
+        <span class="emoji">ℹ️</span>
+        <span class="tool-name">About</span>
+      </button>
+
+    </section>
+
+    <section class="welcome-card">
+      <h3>Welcome to VoloX AI</h3>
+
+      <p>
+        Explore information, search images, and chat through
+        the VoloX AI interface. More connected AI features
+        will become available as their services are configured.
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    © 2026 VoloX AI. All rights reserved.
+  </footer>
+
+  <script>
+    function searchWeb(event) {
+      event.preventDefault();
+
+      const query = document
+        .getElementById("searchInput")
+        .value.trim();
+
+      if (!query) return;
+
+      window.location.href =
+        "https://www.google.com/search?q=" +
+        encodeURIComponent(query);
+    }
+
+    function openAI() {
+      window.location.href = "chat.html";
+    }
+
+    function openImages() {
+      window.location.href = "features.html";
+    }
+
+    function openCreate() {
+      window.location.href = "features.html";
+    }
+
+    function openLens() {
+      window.location.href = "features.html";
+    }
+
+    function openNews() {
+      window.location.href = "https://news.google.com/";
+    }
+
+    function openSports() {
+      window.location.href =
+        "https://www.google.com/search?q=sports+news";
+    }
+
+    function openDiscover() {
+      window.location.href = "https://www.google.com/";
+    }
+
+    function openProfile() {
+      window.location.href = "profile.html";
+    }
+
+    function openAbout() {
+      alert(
+        "VoloX AI\n\n" +
+        "Search, Discover and AI Assistant Project.\n" +
+        "Version 1.0.0"
+      );
+    }
+  </script>
+
+</body>
+</html>
