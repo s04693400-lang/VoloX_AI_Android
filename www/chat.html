@@ -1,0 +1,283 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101014">
+  <title>VoloX AI Chat</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #101014;
+      color: white;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      height: 68px;
+      flex-shrink: 0;
+      padding: 0 18px;
+      background: #202027;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid #38383f;
+    }
+
+    header a {
+      color: #ff4242;
+      text-decoration: none;
+      font-size: 25px;
+    }
+
+    header h2 {
+      margin: 0;
+      font-size: 21px;
+    }
+
+    .logo {
+      color: #ff4242;
+      font-weight: bold;
+    }
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      padding: 13px 16px;
+      margin: 12px 0;
+      border-radius: 15px;
+      max-width: 85%;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .user {
+      background: #c93636;
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+    }
+
+    .assistant {
+      background: #292930;
+      margin-right: auto;
+      border-bottom-left-radius: 4px;
+    }
+
+    .welcome {
+      text-align: center;
+      color: #aaa;
+      margin: 70px auto 0;
+      max-width: 400px;
+    }
+
+    .welcome h1 {
+      color: #ff4242;
+      font-size: 36px;
+    }
+
+    .welcome p {
+      line-height: 1.6;
+    }
+
+    .chat-form {
+      display: flex;
+      gap: 8px;
+      padding: 14px;
+      background: #202027;
+      border-top: 1px solid #38383f;
+    }
+
+    .chat-form input {
+      flex: 1;
+      min-width: 0;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #444;
+      background: #303039;
+      color: white;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .chat-form input:focus {
+      border-color: #ff4242;
+    }
+
+    .chat-form button {
+      border: none;
+      border-radius: 12px;
+      padding: 0 19px;
+      background: #ff4242;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .chat-form button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .status {
+      text-align: center;
+      color: #888;
+      font-size: 12px;
+      padding: 5px 10px;
+      background: #202027;
+    }
+
+    @media (max-width: 400px) {
+      .message {
+        max-width: 92%;
+      }
+
+      header h2 {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <a href="index.html" aria-label="Go home">←</a>
+    <h2><span class="logo">VoloX</span> AI Chat</h2>
+  </header>
+
+  <div id="messages" aria-live="polite">
+    <div class="welcome" id="welcome">
+      <h1>VoloX AI</h1>
+      <p>Your AI assistant experience starts here.</p>
+      <p>Ask a question to begin your conversation.</p>
+    </div>
+  </div>
+
+  <div class="status" id="status">
+    AI connection requires a deployed backend.
+  </div>
+
+  <form class="chat-form" id="chatForm">
+    <input
+      id="messageInput"
+      type="text"
+      placeholder="Message VoloX AI..."
+      autocomplete="off"
+      maxlength="4000"
+      required
+    >
+
+    <button id="sendButton" type="submit">
+      Send
+    </button>
+  </form>
+
+  <script>
+    // Replace this with your deployed backend URL.
+    // Example: https://your-server.example.com/api/chat
+    const API_URL = "YOUR_BACKEND_URL/api/chat";
+
+    const form = document.getElementById("chatForm");
+    const input = document.getElementById("messageInput");
+    const messages = document.getElementById("messages");
+    const sendButton = document.getElementById("sendButton");
+    const status = document.getElementById("status");
+
+    function addMessage(text, type) {
+      const message = document.createElement("div");
+
+      message.className = "message " + type;
+      message.textContent = text;
+
+      messages.appendChild(message);
+      messages.scrollTop = messages.scrollHeight;
+
+      return message;
+    }
+
+    form.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const message = input.value.trim();
+
+      if (!message) return;
+
+      if (
+        API_URL.includes("YOUR_BACKEND_URL") ||
+        !API_URL.startsWith("https://")
+      ) {
+        status.textContent = "Backend not configured yet.";
+        return;
+      }
+
+      document.getElementById("welcome")?.remove();
+
+      addMessage(message, "user");
+
+      input.value = "";
+      input.disabled = true;
+      sendButton.disabled = true;
+
+      const loading = addMessage(
+        "VoloX AI is thinking...",
+        "assistant"
+      );
+
+      status.textContent = "Connecting to VoloX AI...";
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: message
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Server request failed.");
+        }
+
+        loading.textContent =
+          data.reply || "No response received.";
+
+        status.textContent = "Connected to VoloX AI";
+
+      } catch (error) {
+        loading.textContent =
+          "Sorry! I couldn't connect right now. Please try again later.";
+
+        status.textContent = "Connection unavailable.";
+
+        console.error("VoloX error:", error);
+
+      } finally {
+        input.disabled = false;
+        sendButton.disabled = false;
+        input.focus();
+        messages.scrollTop = messages.scrollHeight;
+      }
+    });
+  </script>
+
+</body>
+</html>
