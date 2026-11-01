@@ -1,0 +1,10 @@
+
+{
+  "name": "VoloX AI",
+  "short_name": "VoloX",
+  "description": "VoloX AI Search and Assistant",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#101014",
+  "theme_color": "#ff4242"
+}
