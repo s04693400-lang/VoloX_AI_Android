@@ -1,0 +1,237 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101014">
+  <title>VoloX AI Profile</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #101014;
+      color: white;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
+      background: #202027;
+      border-bottom: 1px solid #38383f;
+    }
+
+    header a {
+      color: #ff4242;
+      text-decoration: none;
+      font-size: 24px;
+    }
+
+    header h2 {
+      margin: 0;
+    }
+
+    main {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .profile-card, .setting-card {
+      background: #202027;
+      border: 1px solid #38383f;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .avatar {
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      background: #ff4242;
+      display: grid;
+      place-items: center;
+      font-size: 35px;
+      margin-bottom: 15px;
+    }
+
+    h3 {
+      margin-top: 0;
+    }
+
+    p {
+      color: #aaa;
+      line-height: 1.5;
+    }
+
+    .setting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid #38383f;
+    }
+
+    .setting:last-child {
+      border-bottom: none;
+    }
+
+    select {
+      padding: 9px;
+      border-radius: 9px;
+      border: 1px solid #555;
+      background: #303039;
+      color: white;
+    }
+
+    .action {
+      width: 100%;
+      padding: 13px;
+      background: #ff4242;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .secondary {
+      background: #38383f;
+    }
+
+    footer {
+      text-align: center;
+      color: #777;
+      padding: 20px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <a href="index.html">←</a>
+    <h2>VoloX AI Profile</h2>
+  </header>
+
+  <main>
+
+    <section class="profile-card">
+      <div class="avatar">👤</div>
+      <h2 id="profileName">VoloX User</h2>
+      <p id="profileEmail">Not signed in</p>
+      <p>Your VoloX AI account and preferences.</p>
+    </section>
+
+    <section class="setting-card">
+      <h3>⚙️ Settings</h3>
+
+      <div class="setting">
+        <span>Appearance</span>
+        <select id="themeSelect" onchange="changeTheme(this.value)">
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
+      </div>
+
+      <div class="setting">
+        <span>App name</span>
+        <strong>VoloX AI</strong>
+      </div>
+
+      <div class="setting">
+        <span>Version</span>
+        <strong>1.0.0</strong>
+      </div>
+    </section>
+
+    <section class="setting-card">
+      <h3>ℹ️ About VoloX AI</h3>
+      <p>
+        VoloX AI is a search and AI assistant project.
+        Explore the web and use connected AI services.
+      </p>
+
+      <button class="action secondary" onclick="showPrivacy()">
+        Privacy information
+      </button>
+
+      <button class="action secondary" onclick="showHelp()">
+        Help and support
+      </button>
+    </section>
+
+    <button class="action" onclick="goHome()">
+      Back to Home
+    </button>
+
+  </main>
+
+  <footer>
+    © 2026 VoloX AI
+  </footer>
+
+  <script>
+    function changeTheme(theme) {
+      if (theme === "light") {
+        document.body.style.background = "#f3f3f5";
+        document.body.style.color = "#17171b";
+
+        document.querySelectorAll(
+          ".profile-card, .setting-card, header"
+        ).forEach(element => {
+          element.style.background = "#ffffff";
+          element.style.borderColor = "#dddddd";
+        });
+      } else {
+        document.body.style.background = "#101014";
+        document.body.style.color = "#ffffff";
+
+        document.querySelectorAll(
+          ".profile-card, .setting-card, header"
+        ).forEach(element => {
+          element.style.background = "#202027";
+          element.style.borderColor = "#38383f";
+        });
+      }
+
+      localStorage.setItem("voloxTheme", theme);
+    }
+
+    function showPrivacy() {
+      alert(
+        "VoloX AI privacy: Never share passwords or API keys. " +
+        "Account and data privacy features will be configured " +
+        "when authentication and backend services are connected."
+      );
+    }
+
+    function showHelp() {
+      alert("VoloX AI support information will be added soon.");
+    }
+
+    function goHome() {
+      window.location.href = "index.html";
+    }
+
+    const savedTheme = localStorage.getItem("voloxTheme");
+
+    if (savedTheme) {
+      document.getElementById("themeSelect").value = savedTheme;
+      changeTheme(savedTheme);
+    }
+  </script>
+
+</body>
+</html>
